@@ -1,5 +1,6 @@
 import express from 'express'
 import { authenticate, authorize } from '../middleware/auth.middleware.js'
+import { loginAdmin } from '../controllers/auth.controller.js'
 import {
     createEvent,
     updateEvent,
@@ -11,6 +12,8 @@ import {
 } from '../controllers/admin.controller.js'
 
 const router = express.Router()
+
+router.post('/login', loginAdmin)
 
 router.use(authenticate)
 router.use(authorize('admin'))

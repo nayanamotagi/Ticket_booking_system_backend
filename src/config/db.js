@@ -16,6 +16,8 @@ const connectDatabase = async () => {
         serverSelectionTimeoutMS: 5000,
         connectTimeoutMS: 10000,
     })
+
+    console.log('MongoDB connected successfully')
 }
 
 export default connectDatabase

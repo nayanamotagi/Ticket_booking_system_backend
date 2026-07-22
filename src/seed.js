@@ -9,7 +9,7 @@ dotenv.config()
 const runSeed = async () => {
     await connectDatabase()
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com'
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@gmail.com'
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
     const adminExists = await User.findOne({ email: adminEmail.toLowerCase().trim() })
     if (!adminExists) {
