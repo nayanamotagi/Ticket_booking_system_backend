@@ -13,13 +13,24 @@ const app = express()
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://your-frontend.vercel.app',
+    'http://localhost:4173',
+    process.env.FRONTEND_URL || 'https://your-frontend.vercel.app',
+    process.env.ADMIN_FRONTEND_URL || 'https://your-admin-frontend.vercel.app',
+    'https://ticket-booking-system-frontend-5z7pjqw9k-nayanamotagis-projects.vercel.app',
 ]
 
-app.use(cors({
-    origin: [...allowedOrigins, 'https://ticket-booking-system-frontend-5z7pjqw9k-nayanamotagis-projects.vercel.app'],
+const corsOptions = {
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error(`CORS policy does not allow access from origin ${origin}`))
+        }
+    },
     credentials: true,
-}))
+}
+
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
