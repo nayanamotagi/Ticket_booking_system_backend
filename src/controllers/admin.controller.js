@@ -100,6 +100,60 @@ export const listTransactions = async (req, res, next) => {
     }
 }
 
+export const getEventSeatStatus = async (req, res, next) => {
+    try {
+        const event = await Event.findById(req.params.id).select('title date venue totalSeats seats')
+        if (!event) return res.status(404).json({ message: 'Event not found' })
+
+        res.json({
+            eventId: event._id,
+            title: event.title,
+            date: event.date,
+            venue: event.venue,
+            totalSeats: event.totalSeats,
+            seats: event.seats,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const refundWallet = async (req, res, next) => {
+    const session = await mongoose.startSession()
+    try {
+        const { userId, amount } = req.body
+        const cents = Number(amount)
+        if (!userId || !Number.isInteger(cents) || cents <= 0) {
+            return res.status(400).json({ message: 'userId and positive integer amount are required' })
+        }
+
+        session.startTransaction()
+        const user = await User.findById(userId).session(session)
+        if (!user) {
+            await session.abortTransaction()
+            return res.status(404).json({ message: 'User not found' })
+        }
+
+        user.walletBalance += cents
+        await user.save({ session })
+
+        await Transaction.create([{
+            userId: user._id,
+            type: 'REFUND',
+            amount: cents,
+            note: `Admin refund of ${cents} cents to ${user.email}`,
+        }], { session })
+
+        await session.commitTransaction()
+        res.json({ message: 'Refund successful', walletBalance: user.walletBalance })
+    } catch (error) {
+        await session.abortTransaction()
+        next(error)
+    } finally {
+        session.endSession()
+    }
+}
+
 export const cancelBookingAsAdmin = async (req, res, next) => {
     const session = await mongoose.startSession()
     try {

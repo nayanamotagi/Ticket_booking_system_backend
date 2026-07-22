@@ -16,6 +16,11 @@ export const authenticate = async (req, res, next) => {
         const user = await User.findById(payload.sub)
         if (!user) return res.status(401).json({ message: 'Invalid token payload' })
 
+        const tokenVersion = typeof payload.tokenVersion === 'number' ? payload.tokenVersion : 0
+        if (tokenVersion !== user.tokenVersion) {
+            return res.status(401).json({ message: 'Token has been revoked' })
+        }
+
         req.user = user
         next()
     } catch (error) {

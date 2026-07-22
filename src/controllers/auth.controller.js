@@ -6,9 +6,18 @@ const createToken = (user) => {
     const secret = process.env.JWT_SECRET
     if (!secret) throw new Error('JWT_SECRET is required')
 
-    return jwt.sign({ sub: user._id.toString(), role: user.role, name: user.name }, secret, {
-        expiresIn: '8h',
-    })
+    return jwt.sign(
+        {
+            sub: user._id.toString(),
+            role: user.role,
+            name: user.name,
+            tokenVersion: user.tokenVersion || 0,
+        },
+        secret,
+        {
+            expiresIn: '8h',
+        },
+    )
 }
 
 export const register = async (req, res, next) => {
@@ -82,6 +91,22 @@ export const loginAdmin = async (req, res, next) => {
 
         const token = createToken(user)
         res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, walletBalance: user.walletBalance } })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const logout = async (req, res, next) => {
+    try {
+        const user = req.user
+        if (!user) {
+            return res.status(401).json({ message: 'Unauthorized' })
+        }
+
+        user.tokenVersion += 1
+        await user.save()
+
+        res.json({ message: 'Logout successful' })
     } catch (error) {
         next(error)
     }

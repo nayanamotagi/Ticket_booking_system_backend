@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ['user', 'admin'], default: 'user' },
     walletBalance: { type: Number, required: true, default: 0 },
+    tokenVersion: { type: Number, required: true, default: 0 },
 }, { timestamps: true })
 
 const User = mongoose.model('User', userSchema)
