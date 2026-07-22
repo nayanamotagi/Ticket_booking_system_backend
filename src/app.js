@@ -11,12 +11,20 @@ import { expireReservationsJob } from './services/reservation.service.js'
 
 const app = express()
 
-app.use(cors())
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://your-frontend.vercel.app',
+]
+
+app.use(cors({
+    origin: [...allowedOrigins, 'https://ticket-booking-system-frontend-5z7pjqw9k-nayanamotagis-projects.vercel.app'],
+    credentials: true,
+}))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
-app.use('/api/auth', authRoutes)
+app.use(['/api/auth', '/auth'], authRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/bookings', bookingRoutes)
 app.use('/api/wallet', walletRoutes)
