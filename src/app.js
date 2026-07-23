@@ -14,22 +14,25 @@ const app = express()
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:4173',
-    process.env.FRONTEND_URL,
-    process.env.ADMIN_FRONTEND_URL,
-].filter(Boolean)
+    'https://ticket-booking-admin-frontend-oxyus8r8e-nayanamotagis-projects.vercel.app',
+    'https://ticket-booking-system-frontend.vercel.app',
+]
 
 const corsOptions = {
     origin(origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true)
-        } else {
-            callback(new Error(`CORS policy does not allow access from origin ${origin}`))
+            return callback(null, true)
         }
+
+        console.error('Blocked Origin:', origin)
+
+        callback(new Error(`CORS policy does not allow access from origin ${origin}`))
     },
     credentials: true,
 }
 
 app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
