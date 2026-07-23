@@ -43,6 +43,10 @@ app.use('/api/bookings', bookingRoutes)
 app.use('/api/wallet', walletRoutes)
 app.use('/api/admin', adminRoutes)
 
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Ticket booking backend is running' })
+})
+
 app.use(errorHandler)
 
 expireReservationsJob()
