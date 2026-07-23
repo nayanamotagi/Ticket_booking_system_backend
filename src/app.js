@@ -16,6 +16,7 @@ const allowedOrigins = [
     'http://localhost:4173',
     'https://ticket-booking-admin-frontend-oxyus8r8e-nayanamotagis-projects.vercel.app',
     'https://ticket-booking-system-frontend.vercel.app',
+    'https://ticket-booking-system-frontend-e5djxh96s-nayanamotagis-projects.vercel.app',
 ]
 
 const corsOptions = {
